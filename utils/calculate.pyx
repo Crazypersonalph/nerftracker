@@ -1,5 +1,4 @@
 import utils.checkVisibility as checkVis
-
 cdef double x1,y1,z1
 cdef double x2,y2,z2
 cdef double x3,y3,z3

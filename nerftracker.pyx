@@ -1,9 +1,12 @@
+# cython: cdivision=False, boundscheck=False, wraparound=False
+import cython
+
 import utils.landmarker as bl # bl for body landmarker
 import utils.mpdrawer as mpb # mpb for mediapipe drawer
 import utils.calculate as calc # self-explanatory
 import cv2
 
-cpdef int main():
+cpdef void main():
   vid = cv2.VideoCapture(0)
   body_landmarker = bl.BodyLandmarkerResults()
   while True:
