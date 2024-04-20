@@ -1,5 +1,6 @@
-import utils.landmarker as bl
-import utils.mpdrawer as db
+import utils.landmarker as bl # bl for body landmarker
+import utils.mpdrawer as mpb # mpb for mediapipe drawer
+import utils.calculate as calc # self explanatory
 import cv2
 
 def main():
@@ -9,25 +10,11 @@ def main():
       ret, frame = vid.read() # Start reading frames from camera
       body_landmarker.detect(frame) # Start async detection of all bodies
       if (body_landmarker.result != None):
-        frame = db.draw_body_landmarks_on_image(frame, body_landmarker.result) # Draw body landmarks onto image
-        if (body_landmarker.result.pose_world_landmarks): # Check if pose landmarks exist
-          if (0.85 < body_landmarker.result.pose_world_landmarks[0][12].visibility and 0.85 < body_landmarker.result.pose_world_landmarks[0][23].visibility):
-            # Get all xyz values from hip and shoulder landmarks
-            x1 = body_landmarker.result.pose_world_landmarks[0][12].x
-            x2 = body_landmarker.result.pose_world_landmarks[0][23].x
-
-            y1 = body_landmarker.result.pose_world_landmarks[0][12].y
-            y2 = body_landmarker.result.pose_world_landmarks[0][23].y
-
-            z1 = body_landmarker.result.pose_world_landmarks[0][12].z
-            z2 = body_landmarker.result.pose_world_landmarks[0][23].z
-
-            # Get averaged out values
-            xyz = ((x1+x2)/2, (y1+y2)/2, (z1+z2)/2)
-            print(xyz)
-            
+        frame = mpb.draw_body_landmarks_on_image(frame, body_landmarker.result) # Draw body landmarks onto image
+        # Calculate coordinates of centre of torso relative to frame
+        xyz = calc.calculate(body_landmarker)
+        print(xyz)
       cv2.imshow('frame', frame) # Show the resulting image
-
 
       if cv2.waitKey(1) & 0xFF == ord('q'):
          break
