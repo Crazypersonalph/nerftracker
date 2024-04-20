@@ -3,6 +3,7 @@ import time
 
 body_model_path = './models/pose_landmarker_heavy.task'
 
+
 class BodyLandmarkerResults:
     def __init__(self):
       # Get all variables needed

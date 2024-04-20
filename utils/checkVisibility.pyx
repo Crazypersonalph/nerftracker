@@ -1,4 +1,4 @@
-def check_visibility(body_landmarker): # Check visibility of specific torso landmarks
+cpdef check_visibility(body_landmarker): # Check visibility of specific torso landmarks
   result = []
   shoulder_left = body_landmarker.result.pose_landmarks[0][12]
   hip_right = body_landmarker.result.pose_landmarks[0][23]

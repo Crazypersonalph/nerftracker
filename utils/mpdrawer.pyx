@@ -2,7 +2,7 @@ from mediapipe import solutions
 from mediapipe.framework.formats import landmark_pb2
 import numpy as np
 
-def draw_body_landmarks_on_image(rgb_image, detection_result):
+cpdef draw_body_landmarks_on_image(rgb_image, detection_result):
   pose_landmarks_list = detection_result.pose_landmarks
   annotated_image = np.copy(rgb_image)
 

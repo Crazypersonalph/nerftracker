@@ -1,5 +1,10 @@
 import utils.checkVisibility as checkVis
 
+cdef double x1,y1,z1
+cdef double x2,y2,z2
+cdef double x3,y3,z3
+cdef double x4,y4,z4
+
 def calculate(body_landmarker):
   if body_landmarker.result.pose_landmarks: # Check if pose landmarks exist
           shoulder_left = body_landmarker.result.pose_landmarks[0][12]

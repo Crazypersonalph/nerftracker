@@ -3,7 +3,7 @@ import utils.mpdrawer as mpb # mpb for mediapipe drawer
 import utils.calculate as calc # self-explanatory
 import cv2
 
-def main():
+cpdef int main():
   vid = cv2.VideoCapture(0)
   body_landmarker = bl.BodyLandmarkerResults()
   while True:
