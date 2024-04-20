@@ -14,6 +14,8 @@ def main():
         # Calculate coordinates of centre of torso relative to frame
         xyz = calc.calculate(body_landmarker)
         print(xyz)
+        if (xyz != None):
+          cv2.circle(frame, (int(xyz[0] * 640), int(xyz[1] * 480)), 20, (0,0,255), -1)
       cv2.imshow('frame', frame) # Show the resulting image
 
       if cv2.waitKey(1) & 0xFF == ord('q'):
