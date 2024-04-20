@@ -13,7 +13,6 @@ def main():
         frame = mpb.draw_body_landmarks_on_image(frame, body_landmarker.result) # Draw body landmarks onto image
         # Calculate coordinates of centre of torso relative to frame
         xyz = calc.calculate(body_landmarker)
-        print(xyz)
         if (xyz != None):
           cv2.circle(frame, (int(xyz[0] * 640), int(xyz[1] * 480)), 20, (0,0,255), -1)
           cv2.line(frame, (int(640/2), int(480/2)), (int(xyz[0] * 640), int(xyz[1] * 480)), (0,255,0), 8)
