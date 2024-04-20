@@ -3,7 +3,7 @@ import time
 
 body_model_path = './models/pose_landmarker_heavy.task'
 
-class body_landmarker_results():
+class BodyLandmarkerResults:
     def __init__(self):
       # Get all variables needed
       self.BaseOptions = mp.tasks.BaseOptions
@@ -12,8 +12,8 @@ class body_landmarker_results():
       self.PoseLandmarkerResult = mp.tasks.vision.PoseLandmarkerResult   
       self.VisionRunningMode = mp.tasks.vision.RunningMode
       self.result = None
-      self.createLandMarker()
-    def createLandMarker(self):
+      self.create_landmarker()
+    def create_landmarker(self):
         def update_result(result: mp.tasks.vision.PoseLandmarkerResult, output_image: mp.Image, timestamp_ms: int):
             self.result = result # Make result accessible
 

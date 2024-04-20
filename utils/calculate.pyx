@@ -1,7 +1,7 @@
-import utils.checkVisibility as checkvis
+import utils.checkVisibility as checkVis
 
 def calculate(body_landmarker):
-  if (body_landmarker.result.pose_landmarks): # Check if pose landmarks exist
+  if body_landmarker.result.pose_landmarks: # Check if pose landmarks exist
           shoulder_left = body_landmarker.result.pose_landmarks[0][12]
           hip_right = body_landmarker.result.pose_landmarks[0][23]
 
@@ -9,8 +9,8 @@ def calculate(body_landmarker):
           hip_left = body_landmarker.result.pose_landmarks[0][24]
 
 
-          cv = checkvis.checkVisibility(body_landmarker) # Check visibility of shoulder and hip landmarks
-          if (cv[0] == True and cv[1] == False): # If only shoulder pair 1 is available
+          cv = checkVis.check_visibility(body_landmarker) # Check visibility of shoulder and hip landmarks
+          if cv[0] == True and cv[1] == False: # If only shoulder pair 1 is available
             # Get all xyz values from hip and shoulder landmarks
             x1 = shoulder_left.x
             x2 = hip_right.x
@@ -25,7 +25,7 @@ def calculate(body_landmarker):
             xyz = ((x1+x2)/2, (y1+y2)/2, (z1+z2)/2)
             return xyz
           
-          if (cv[0] == False and cv[1] == True): # If only shoulder pair 2 is available
+          if cv[0] == False and cv[1] == True: # If only shoulder pair 2 is available
             # Get all xyz values from hip and shoulder landmarks
             x1 = shoulder_right.x
             x2 = hip_left.x
@@ -40,7 +40,7 @@ def calculate(body_landmarker):
             xyz = ((x1+x2)/2, (y1+y2)/2, (z1+z2)/2)
             return xyz
           
-          if (cv[0] == True and cv[1] == True): # If all pairs are available (most accurate)
+          if cv[0] == True and cv[1] == True: # If all pairs are available (most accurate)
             # Get all xyz values from hip and shoulder landmarks
             x1 = shoulder_left.x
             x2 = hip_right.x
