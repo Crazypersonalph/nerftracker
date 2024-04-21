@@ -1,5 +1,4 @@
-# cython: cdivision=False, boundscheck=False, wraparound=False
-import cython
+import math
 
 import utils.landmarker as bl # bl for body landmarker
 import utils.mpdrawer as mpb # mpb for mediapipe drawer
@@ -17,8 +16,16 @@ cpdef void main():
         # Calculate coordinates of centre of torso relative to frame
         xyz = calc.calculate(body_landmarker)
         if xyz is not None:
-          cv2.circle(frame, (int(xyz[0] * 640), int(xyz[1] * 480)), 20, (0,0,255), -1)
-          cv2.line(frame, (int(640/2), int(480/2)), (int(xyz[0] * 640), int(xyz[1] * 480)), (0,255,0), 8)
+            cv2.circle(frame, (int(xyz[0] * 640), int(xyz[1] * 480)), 20, (0,0,255), -1)
+            cv2.line(frame, (int(640/2), int(480/2)), (int(xyz[0] * 640), int(xyz[1] * 480)), (0,255,0), 8)
+            horiz_mov = (320-int(xyz[0] * 640)) # Set how much we need to move in pixels
+            vert_mov = (240-int(xyz[1]*480))
+            if abs(horiz_mov) <= 20: # Tell the arduino if it is within the threshold to leave it alone
+                horiz_mov=0
+            if abs(vert_mov) <= 20:
+                vert_mov=0
+            xy_mov = (horiz_mov, vert_mov)
+            print(xy_mov)
       cv2.imshow('frame', frame) # Show the resulting image
 
       if cv2.waitKey(1) & 0xFF == ord('q'):

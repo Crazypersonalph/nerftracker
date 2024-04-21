@@ -1,8 +1,11 @@
 import os
-from setuptools import setup, Extension
+from setuptools import setup
+from Cython.Distutils import Extension
 
 
-def scandir(direct, files=[]):
+def scandir(direct, files=None):
+    if files is None:
+        files = []
     for file in os.listdir(direct):
         path = os.path.join(direct, file)
         if os.path.isfile(path) and path.endswith(".pyx"):
@@ -18,7 +21,11 @@ def make_extension(extname):
         extname,
         [ext_path],
         include_dirs=["."],   # adding the '.' to include_dirs is CRUCIAL!!
-        extra_compile_args=["/O2"]
+        extra_compile_args=["/O2"],
+        cython_directives={"cdivision": "False",
+                           "wraparound": "False",
+                           "boundscheck": "False",
+                           "language_level": "3str"},
         )
 
 
@@ -27,7 +34,15 @@ extNames = scandir("utils")
 
 # and build up the set of Extension objects
 extensions = [make_extension(name) for name in extNames]
-extensions.insert(0, Extension("nerftracker", ["nerftracker.pyx"], include_dirs=["."], extra_compile_args=["/O2"]))
+extensions.insert(0,
+                  Extension("nerftracker",
+                            ["nerftracker.pyx"],
+                            include_dirs=["."],
+                            extra_compile_args=["/O2"],
+                            cython_directives={"cdivision": "False",
+                                               "wraparound": "False",
+                                               "boundscheck": "False",
+                                               "language_level": "3str"}))
 
 setup(
     name='nerftracker',
