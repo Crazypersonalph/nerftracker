@@ -5,6 +5,9 @@ import utils.mpdrawer as mpb # mpb for mediapipe drawer
 import utils.calculate as calc # self-explanatory
 import cv2
 
+cdef float horiz_mov
+cdef float vert_mov
+
 cpdef void main():
   vid = cv2.VideoCapture(0)
   body_landmarker = bl.BodyLandmarkerResults()
