@@ -1,5 +1,5 @@
 test.txt
-.vscode/
+.vscode/**
 **/__pycache__/**
 build/
 *.c

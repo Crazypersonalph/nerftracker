@@ -1,66 +1,49 @@
+import cython.parallel as para
+import numpy as np
+cimport numpy as np
 import utils.checkVisibility as checkVis
-cdef double x1,y1,z1
-cdef double x2,y2,z2
-cdef double x3,y3,z3
-cdef double x4,y4,z4
+cpdef np.ndarray[double, ndim=1] calculate(body_landmarker):
+    cdef list cv
+    cdef double[:] xyz = np.zeros(3, dtype=np.float64)
+    cdef double[:] shoulder_left = np.zeros(3, dtype=np.float64)
+    cdef double[:] hip_right = np.zeros(3, dtype=np.float64)
+    cdef double[:] shoulder_right = np.zeros(3, dtype=np.float64)
+    cdef double[:] hip_left = np.zeros(3, dtype=np.float64)
+    cdef int i
+    cdef bint cv0, cv1
+    cdef bint no_detection = False
 
-cpdef calculate(body_landmarker):
-  if body_landmarker.result.pose_landmarks: # Check if pose landmarks exist
-          shoulder_left = body_landmarker.result.pose_landmarks[0][12]
-          hip_right = body_landmarker.result.pose_landmarks[0][23]
+    if body_landmarker.result.pose_landmarks:
+        shoulder_left[0] = body_landmarker.result.pose_landmarks[0][12].x
+        shoulder_left[1] = body_landmarker.result.pose_landmarks[0][12].y
+        shoulder_left[2] = body_landmarker.result.pose_landmarks[0][12].z
 
-          shoulder_right = body_landmarker.result.pose_landmarks[0][11]
-          hip_left = body_landmarker.result.pose_landmarks[0][24]
+        hip_right[0] = body_landmarker.result.pose_landmarks[0][23].x
+        hip_right[1] = body_landmarker.result.pose_landmarks[0][23].y
+        hip_right[2] = body_landmarker.result.pose_landmarks[0][23].z
 
+        shoulder_right[0] = body_landmarker.result.pose_landmarks[0][11].x
+        shoulder_right[1] = body_landmarker.result.pose_landmarks[0][11].y
+        shoulder_right[2] = body_landmarker.result.pose_landmarks[0][11].z
 
-          cv = checkVis.check_visibility(body_landmarker) # Check visibility of shoulder and hip landmarks
-          if cv[0] == True and cv[1] == False: # If only shoulder pair 1 is available
-            # Get all xyz values from hip and shoulder landmarks
-            x1 = shoulder_left.x
-            x2 = hip_right.x
+        hip_left[0] = body_landmarker.result.pose_landmarks[0][24].x
+        hip_left[1] = body_landmarker.result.pose_landmarks[0][24].y
+        hip_left[2] = body_landmarker.result.pose_landmarks[0][24].z
 
-            y1 = shoulder_left.y
-            y2 = hip_right.y
-
-            z1 = shoulder_left.z
-            z2 = hip_right.z
-
-            # Get averaged out values
-            xyz = ((x1+x2)/2, (y1+y2)/2, (z1+z2)/2)
-            return xyz
-          
-          if cv[0] == False and cv[1] == True: # If only shoulder pair 2 is available
-            # Get all xyz values from hip and shoulder landmarks
-            x1 = shoulder_right.x
-            x2 = hip_left.x
-
-            y1 = shoulder_right.y
-            y2 = hip_left.y
-
-            z1 = shoulder_right.z
-            z2 = hip_left.z
-
-            # Get averaged out values
-            xyz = ((x1+x2)/2, (y1+y2)/2, (z1+z2)/2)
-            return xyz
-          
-          if cv[0] == True and cv[1] == True: # If all pairs are available (most accurate)
-            # Get all xyz values from hip and shoulder landmarks
-            x1 = shoulder_left.x
-            x2 = hip_right.x
-            x3 = shoulder_right.x
-            x4 = hip_left.x
-
-            y1 = shoulder_left.y
-            y2 = hip_right.y
-            y3 = shoulder_right.y
-            y4 = hip_left.y
-
-            z1 = shoulder_left.z
-            z2 = hip_right.z
-            z3 = shoulder_right.z
-            z4 = hip_left.z
-
-            # Get averaged out values
-            xyz = ((x1+x2+x3+x4)/4, (y1+y2+y3+y4)/4, (z1+z2+z3+z4)/4)
-            return xyz
+        cv = checkVis.check_visibility(body_landmarker)
+        cv0 = cv[0]
+        cv1 = cv[1]
+        for i in range(3):
+            if cv0 and not cv1:
+                xyz[i] = (shoulder_left[i] + hip_right[i]) / 2
+            elif not cv0 and cv1:
+                xyz[i] = (shoulder_right[i] + hip_left[i]) / 2
+            elif cv0 and cv1:
+                xyz[i] = (shoulder_left[i] + hip_right[i] + shoulder_right[i] + hip_left[i]) / 4
+            elif not cv0 and not cv1:
+                no_detection = True
+    else:
+        return None
+    if no_detection:
+        return None
+    return np.asarray(xyz)

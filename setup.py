@@ -1,6 +1,7 @@
 import os
 from setuptools import setup
 from Cython.Distutils import Extension
+import numpy as np
 
 
 def scandir(direct, files=None):
@@ -20,11 +21,11 @@ def make_extension(extname):
     return Extension(
         extname,
         [ext_path],
-        include_dirs=["."],   # adding the '.' to include_dirs is CRUCIAL!!
+        include_dirs=[".", np.get_include()],   # adding the '.' to include_dirs is CRUCIAL!!
         extra_compile_args=["/O2"],
-        cython_directives={"cdivision": "False",
-                           "wraparound": "False",
-                           "boundscheck": "False",
+        cython_directives={"cdivision": False,
+                           "wraparound": False,
+                           "boundscheck": False,
                            "language_level": "3str"},
         )
 
@@ -37,11 +38,11 @@ extensions = [make_extension(name) for name in extNames]
 extensions.insert(0,
                   Extension("nerftracker",
                             ["nerftracker.pyx"],
-                            include_dirs=["."],
+                            include_dirs=[".", np.get_include()],
                             extra_compile_args=["/O2"],
-                            cython_directives={"cdivision": "False",
-                                               "wraparound": "False",
-                                               "boundscheck": "False",
+                            cython_directives={"cdivision": False,
+                                               "wraparound": False,
+                                               "boundscheck": False,
                                                "language_level": "3str"}))
 
 setup(
