@@ -2,6 +2,7 @@ import utils.landmarker as bl # bl for body landmarker
 import utils.mpdrawer as mpb # mpb for mediapipe drawer
 import utils.calculate as calc # self-explanatory
 import cv2
+cimport numpy as cnp
 
 cdef float horiz_mov
 cdef float vert_mov
@@ -9,11 +10,17 @@ cdef int height
 cdef int width
 
 cpdef void main():
-  vid = cv2.VideoCapture(0)
+  cdef cnp.ndarray[cnp.uint8_t, ndim=3, mode="c"] frame
+  cdef cnp.ndarray[cnp.float64_t, ndim=1] xyz
+
   body_landmarker = bl.BodyLandmarkerResults()
+  vid = cv2.VideoCapture(0)
   while True:
       ret, frame = vid.read() # Start reading frames from camera
-      height, width, *_ = frame.shape
+      # noinspection PyUnresolvedReferences
+      height = frame.shape[0]
+      # noinspection PyUnresolvedReferences
+      width = frame.shape[1]
       body_landmarker.detect(frame) # Start async detection of all bodies
       if body_landmarker.result is not None:
         frame = mpb.draw_body_landmarks_on_image(frame, body_landmarker.result) # Draw body landmarks onto image

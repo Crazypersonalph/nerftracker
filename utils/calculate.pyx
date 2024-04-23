@@ -1,8 +1,7 @@
-import cython.parallel as para
 import numpy as np
-cimport numpy as np
+cimport numpy as cnp
 import utils.checkVisibility as checkVis
-cpdef np.ndarray[double, ndim=1] calculate(body_landmarker):
+cpdef cnp.ndarray[double, ndim=1] calculate(body_landmarker):
     cdef list cv
     cdef double[:] xyz = np.zeros(3, dtype=np.float64)
     cdef double[:] shoulder_left = np.zeros(3, dtype=np.float64)
