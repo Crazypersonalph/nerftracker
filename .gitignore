@@ -1,0 +1,8 @@
+test.txt
+.vscode/**
+**/__pycache__/**
+build/
+*.c
+*.pyd
+.idea/**
+*.html
