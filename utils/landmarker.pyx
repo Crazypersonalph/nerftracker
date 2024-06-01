@@ -1,7 +1,7 @@
 import mediapipe as mp
 import time
 
-body_model_path = './models/pose_landmarker_heavy.task'
+body_model_path = './models/pose_landmarker_lite.task'
 
 
 class BodyLandmarkerResults:
@@ -21,6 +21,7 @@ class BodyLandmarkerResults:
         options = self.PoseLandmarkerOptions( # Mediapipe options
           base_options=self.BaseOptions(model_asset_path=body_model_path),
           running_mode=self.VisionRunningMode.LIVE_STREAM,
+          min_pose_detection_confidence=0.7,
           result_callback=update_result)
         
         self.PoseLandmarker = self.PoseLandmarker.create_from_options(options)
