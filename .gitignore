@@ -6,3 +6,4 @@ build/
 *.pyd
 .idea/**
 *.html
+*.so
