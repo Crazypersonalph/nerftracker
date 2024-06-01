@@ -1,0 +1,43 @@
+import utils.landmarker as bl # bl for body landmarker
+import utils.mpdrawer as mpb # mpb for mediapipe drawer
+import utils.calculate as calc # self-explanatory
+import cv2
+
+def main():
+
+  body_landmarker = bl.BodyLandmarkerResults()
+  vid = cv2.VideoCapture(0)
+  while True:
+      ret, frame = vid.read() # Start reading frames from camera
+      # noinspection PyUnresolvedReferences
+      height = frame.shape[0]
+      # noinspection PyUnresolvedReferences
+      width = frame.shape[1]
+      body_landmarker.detect(frame) # Start async detection of all bodies
+      if body_landmarker.result is not None:
+        frame = mpb.draw_body_landmarks_on_image(frame, body_landmarker.result) # Draw body landmarks onto image
+        # Calculate coordinates of centre of torso relative to frame
+        xyz = calc.calculate(body_landmarker)
+        if xyz is not None:
+            cv2.circle(frame, (int(xyz[0] * width), int(xyz[1] * height)), 20, (0,0,255), -1)
+            cv2.line(frame, (int(width/2), int(height/2)), (int(xyz[0] * width), int(xyz[1] * height)), (0,255,0), 8)
+            horiz_mov = ((width/2)-int(xyz[0] * width)) # Set how much we need to move in pixels
+            vert_mov = ((height/2)-int(xyz[1]*height))
+            if abs(horiz_mov) <= 20: # Tell the arduino if it is within the threshold to leave it alone
+                horiz_mov=0
+            if abs(vert_mov) <= 20:
+                vert_mov=0
+            xy_mov = (horiz_mov, vert_mov)
+            print(xy_mov)
+      cv2.imshow('frame', frame) # Show the resulting image
+
+      if cv2.waitKey(1) & 0xFF == ord('q'):
+         break
+      
+
+  body_landmarker.close()
+  vid.release()
+  cv2.destroyAllWindows()
+
+if __name__ == "__main__":
+   main()
