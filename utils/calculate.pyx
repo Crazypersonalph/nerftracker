@@ -8,6 +8,7 @@ cpdef cnp.ndarray[double, ndim=1] calculate(body_landmarker):
     cdef double[:] hip_right = np.zeros(3, dtype=np.float64)
     cdef double[:] shoulder_right = np.zeros(3, dtype=np.float64)
     cdef double[:] hip_left = np.zeros(3, dtype=np.float64)
+    cdef double[:] nose = np.zeros(3, dtype=np.float64)
     cdef int i
     cdef bint cv0, cv1
     cdef bint no_detection = False
@@ -29,17 +30,25 @@ cpdef cnp.ndarray[double, ndim=1] calculate(body_landmarker):
         hip_left[1] = body_landmarker.result.pose_landmarks[0][24].y
         hip_left[2] = body_landmarker.result.pose_landmarks[0][24].z
 
+        nose[0] = body_landmarker.result.pose_landmarks[0][0].x
+        nose[1] = body_landmarker.result.pose_landmarks[0][0].y
+        nose[2] = body_landmarker.result.pose_landmarks[0][0].z
+
+
         cv = checkVis.check_visibility(body_landmarker)
         cv0 = cv[0]
         cv1 = cv[1]
+        cv2 = cv[2]
         for i in range(3):
-            if cv0 and not cv1:
+            if cv2:
+                xyz[i] = nose[i]
+            elif cv0 and not cv1 and not cv2:
                 xyz[i] = (shoulder_left[i] + hip_right[i]) / 2
-            elif not cv0 and cv1:
+            elif not cv0 and cv1 and not cv2:
                 xyz[i] = (shoulder_right[i] + hip_left[i]) / 2
-            elif cv0 and cv1:
+            elif cv0 and cv1 and not cv2:
                 xyz[i] = (shoulder_left[i] + hip_right[i] + shoulder_right[i] + hip_left[i]) / 4
-            elif not cv0 and not cv1:
+            elif not cv0 and not cv1 and not cv2:
                 no_detection = True
     else:
         return None

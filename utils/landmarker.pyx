@@ -1,7 +1,7 @@
 import mediapipe as mp
 import time
 
-body_model_path = './models/pose_landmarker_lite.task'
+body_model_path = './models/pose_landmarker_full.task'
 
 
 class BodyLandmarkerResults:
